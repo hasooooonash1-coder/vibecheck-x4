@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="mylead-verification" content="b85107f6e9f0a0e35c81749a4987bbdb">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>تطبيق الموعد المثالي</title>
     <style>
@@ -76,35 +77,47 @@
             </a>
         </div>
     </div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function() {
-        let uniqueClickId = 'org_' + Math.floor(Math.random() * 100000) + '_' + Date.now();
-        let referrer = document.referrer.toLowerCase();
-        let trafficSource = "Direct_or_Hidden"; 
-        
-        if (referrer.includes("facebook.com") || referrer.includes("fb.com") || referrer.includes("m.facebook")) { trafficSource = "Facebook"; }
-        else if (referrer.includes("instagram.com")) { trafficSource = "Instagram"; }
-        else if (referrer.includes("tiktok.com")) { trafficSource = "TikTok"; }
-        else if (referrer.includes("youtube.com") || referrer.includes("youtu.be")) { trafficSource = "YouTube"; }
-        else if (referrer.includes("twitter.com") || referrer.includes("t.co") || referrer.includes("x.com")) { trafficSource = "X_Twitter"; }
-        else if (referrer !== "") { try { let url = new URL(referrer); trafficSource = url.hostname.replace('www.', ''); } catch (e) { trafficSource = "Other_Website"; } }
+    // Click ID فريد
+    const uniqueClickId = 'org_' + Math.floor(Math.random() * 100000) + '_' + Date.now();
 
-        const urlParams = new URLSearchParams(window.location.search);
-        urlParams.set('clickid', uniqueClickId);
-        urlParams.set('sub1', trafficSource);
-        urlParams.set('sub2', window.location.hostname);
-        
-        const links = document.querySelectorAll('a.trackable-link');
-        links.forEach(function(link) {
-          let originalUrl = link.getAttribute('href');
-          if (originalUrl) {
-            let separator = originalUrl.includes('?') ? '&' : '?';
-            let newUrl = originalUrl + separator + urlParams.toString();
-            link.setAttribute('href', newUrl);
-          }
-        });
-      });
-    </script>
+    // قراءة القيم القادمة من الرابط الخارجي
+    const incomingParams = new URLSearchParams(window.location.search);
+
+    // المصدر الرئيسي الذي ستحدده أنت في روابط النشر
+   let source = incomingParams.get('sub1') || 'direct';
+
+    // معلومات إضافية اختيارية
+    let campaign = incomingParams.get('sub2') || '';
+    let creative = incomingParams.get('sub3') || '';
+
+    const links = document.querySelectorAll('a.trackable-link');
+
+    links.forEach(function(link) {
+
+        let originalUrl = link.getAttribute('href');
+
+        if (!originalUrl) return;
+
+        let offerUrl = new URL(originalUrl);
+
+        // المتغيرات التي يقرأها MyLead
+        offerUrl.searchParams.set('ml_sub1', source);
+        offerUrl.searchParams.set('ml_sub2', campaign);
+        offerUrl.searchParams.set('ml_sub3', creative);
+
+        // Click ID خاص بك
+        offerUrl.searchParams.set('clickid', uniqueClickId);
+
+        // معلومات إضافية للمراجعة
+        offerUrl.searchParams.set('landing_domain', window.location.hostname);
+
+        link.setAttribute('href', offerUrl.toString());
+    });
+
+});
+</script>
 </body>
 </html>
